@@ -3,11 +3,6 @@
 
 # Python implementation of the Week 2 exercise.
 
-import pygtk
-pygtk.require( '2.0' )
-import gtk
-import glib
-
 from models.map_generator import *
 from models.robot import *
 from models.world import *
@@ -47,52 +42,33 @@ class Week2Simulator:
     self.world_view = WorldView( self.world )
     
     # run the simulation
-    glib.idle_add( self.run_sim )
-    gtk.main()
+    self.run_sim()
 
   def run_sim( self ):
-    print "\n"
-    print "tick"
-    print "\n"
+    # initialize timing control
+    next_refresh_time = time.time() + self.period
+
+    # loop the simulation
+    while self.world.world_time < 500:
+      # increment the simulation
+      try:
+        self.world.step()
+      except CollisionException:
+        print "\n\nCOLLISION!\n\n"
+        break
+      except GoalReachedException:
+        print "\n\nGOAL REACHED!\n\n"
+        break
+
+      # render the current state
+      self.world_view.render_frame()
+
+      # pause the simulation until the next refresh time
+      while time.time() < next_refresh_time: time.sleep( 0 )  # loop sleep until time to refresh
+      next_refresh_time = time.time() + self.period           # update next refresh time
     
-    # increment the simulation
-    try:
-      self.world.step()
-    except CollisionException:
-      print "\n\nCOLLISION!\n\n"
-    except GoalReachedException:
-      print "\n\nGOAL REACHED!\n\n"
-  
-    # render the current state
-    self.world_view.render_frame()
-    
-    glib.timeout_add( int( self.period * 1000 ), self.run_sim )
-    
-    
-    # # initialize timing control
-    # next_refresh_time = time.time() + self.period
-    # 
-    # # loop the simulation
-    # while self.world.world_time < 500:
-    #   # increment the simulation
-    #   try:
-    #     self.world.step()
-    #   except CollisionException:
-    #     print "\n\nCOLLISION!\n\n"
-    #     break
-    #   except GoalReachedException:
-    #     print "\n\nGOAL REACHED!\n\n"
-    #     break
-    # 
-    #   # render the current state
-    #   self.world_view.render_frame()
-    # 
-    #   # pause the simulation until the next refresh time
-    #   while time.time() < next_refresh_time: time.sleep( 0 )  # loop sleep until time to refresh
-    #   next_refresh_time = time.time() + self.period           # update next refresh time
-    # 
-    # # pause the GUI thread ( app crashes otherwise ) 
-    # self.world_view.wait()
+    # pause the GUI thread ( app crashes otherwise ) 
+    self.world_view.wait()
 
   def _add_robot( self, robot ):
     self.world.add_robot( robot )
