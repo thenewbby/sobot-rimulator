@@ -1,10 +1,9 @@
 #!/usr/bin/python
 # -*- Encoding: utf-8 -*
 
-import Euv.EuvGtk as Euv
-import Euv.Frame as Frame
-import Euv.Shapes as Shapes
-import Euv.Color as Color
+import gui.viewer as viewer
+import gui.frame as frame
+
 from obstacle_view import *
 from robot_view import *
 
@@ -21,14 +20,15 @@ class WorldView:
 
   def __init__( self, world ):
     # create viewer
-    self.viewer = Euv.Viewer( size = (VIEW_PORT_PIX_W, VIEW_PORT_PIX_H+CONTROLS_PIX_H),
-                          view_port_center = (0, 0),
-                          view_port_width = WORLD_WIDTH,
-                          recording = False,
-                          flip_y = True )
+    self.viewer = viewer.Viewer()
+    # self.viewer = viewer.Viewer( size = (VIEW_PORT_PIX_W, VIEW_PORT_PIX_H+CONTROLS_PIX_H),
+    #                       view_port_center = (0, 0),
+    #                       view_port_width = WORLD_WIDTH,
+    #                       recording = False,
+    #                       flip_y = True )
 
     # initialize the current frame object
-    self.current_frame = Frame.Frame()
+    self.current_frame = frame.Frame()
 
     # initialize views for world objects
     self.robot_views = []
@@ -58,7 +58,7 @@ class WorldView:
 
     # cycle the frame
     self.viewer.add_frame( self.current_frame )   # push the current frame
-    self.current_frame = Frame.Frame()            # prepare the next frame
+    self.current_frame = frame.Frame()            # prepare the next frame
   
   def wait( self ):
     self.viewer.wait()
@@ -113,7 +113,7 @@ class WorldView:
                       alpha = 0.2 )
     self.current_frame.add_lines( minor_lines_accum,          # draw minor gridlines
                       linewidth = self._meters_per_pixel(),
-                      colro = "black",
+                      color = "black",
                       alpha = 0.1 )
 
 
