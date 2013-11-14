@@ -13,11 +13,17 @@ class Painter:
   def draw_frame( self, frame ):
     context = self.drawing_area.window.cairo_create()
     
-    # transform the the view
     width_pixels = self.drawing_area.allocation.width
     height_pixels = self.drawing_area.allocation.height
+    
+    # paint background
+    self.set_color( context, frame.background_color, frame.background_alpha )
+    context.paint()
+    
+    # transform the the view to metric coordinates
     context.translate( width_pixels/2.0, height_pixels/2.0 )        # move origin to center of window
     context.scale( self.pixels_per_meter, -self.pixels_per_meter )  # pull view to edges of window ( also flips y-axis )
+
     
     draw_list = frame.draw_list
     for component in draw_list:
@@ -27,11 +33,13 @@ class Painter:
                           component['radius'],
                           component['color'],
                           component['alpha'] )
+                          
       elif component['type'] == 'polygons':
         self.draw_polygons( context,
                             component['polygons'],
                             component['color'],
                             component['alpha'] )
+                            
       elif component['type'] == 'lines':
         self.draw_lines( context,
                          component['lines'],

@@ -8,6 +8,8 @@ class Frame:
   
   def __init__( self ):
     self.draw_list = []
+    self.background_color = 'white'
+    self.background_alpha = 1.0
     
     
   def add_circle( self,

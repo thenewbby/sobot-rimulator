@@ -29,6 +29,9 @@ class WorldView:
     self.obstacle_views.append( obstacle_view )
 
   def draw_world_to_frame( self, frame ):
+    # set the background
+    frame.background_color = 'white'
+    
     # draw the grid
     self._draw_grid_to_frame( frame )
     
