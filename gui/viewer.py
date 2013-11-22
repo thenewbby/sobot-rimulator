@@ -124,19 +124,25 @@ class Viewer:
                                           parent = self.window,
                                           action = gtk.FILE_CHOOSER_ACTION_SAVE,
                                           buttons = ( gtk.STOCK_CANCEL, LS_DIALOG_RESPONSE_CANCEL,
-                                                      gtk.STOCK_SAVE, LS_DIALOG_RESPONSE_ACCEPT ) )
-    file_chooser.set_do_overwrite_confirmation( True )
+                                                      gtk.STOCK_SAVE, gtk.LS_DIALOG_RESPONSE_ACCEPT ) )
     file_chooser.set_current_folder( 'maps' )
     
-    # run the file chooser dialog
-    response_id = file_chooser.run()
+    file_chooser.set_modal( True )
+    # file_chooser.set_do_overwrite_confirmation( True )
     
-    # handle the user's response
-    if response_id == LS_DIALOG_RESPONSE_CANCEL:
-      file_chooser.destroy()
-    elif response_id == LS_DIALOG_RESPONSE_ACCEPT:
-      self.simulator.save_map( file_chooser.get_filename() )
-      file_chooser.destroy()
+    # file_chooser.connect( 'confirm-overwrite', self.on_overwrite )
+    file_chooser.connect( 'response', self.on_save_response )
+    file_chooser.show()
+    
+    # # run the file chooser dialog
+    # response_id = file_chooser.run()
+    # 
+    # # handle the user's response
+    # if response_id == LS_DIALOG_RESPONSE_CANCEL:
+    #   file_chooser.destroy()
+    # elif response_id == LS_DIALOG_RESPONSE_ACCEPT:
+    #   self.simulator.save_map( file_chooser.get_filename() )
+    #   file_chooser.destroy()
     
     
     
@@ -149,15 +155,42 @@ class Viewer:
                                                       gtk.STOCK_OPEN, LS_DIALOG_RESPONSE_ACCEPT ) )
     file_chooser.set_current_folder( 'maps' )
     
-    # run the file chooser dialog
-    response_id = file_chooser.run()
+    file_chooser.set_modal( True )
     
-    # handle the user's response
+    file_chooser.connect( 'response', self.on_load_response )
+    file_chooser.show()
+    
+    # # run the file chooser dialog
+    # response_id = file_chooser.run()
+    # 
+    # # handle the user's response
+    # if response_id == LS_DIALOG_RESPONSE_CANCEL:
+    #   file_chooser.destroy()
+    # elif response_id == LS_DIALOG_RESPONSE_ACCEPT:
+    #   self.simulator.load_map( file_chooser.get_filename() )
+    #   file_chooser.destroy()
+      
+      
+  def on_save_response( self, dialog, response_id ):
     if response_id == LS_DIALOG_RESPONSE_CANCEL:
-      file_chooser.destroy()
+      dialog.destroy()
     elif response_id == LS_DIALOG_RESPONSE_ACCEPT:
-      self.simulator.load_map( file_chooser.get_filename() )
-      file_chooser.destroy()
+      self.simulator.save_map( dialog.get_filename() )
+      dialog.destroy()
+      
+      
+  # def on_overwrite( self, dialog ):
+  #   print "\n\n"
+  #   print "HEYA!"
+  #   print "\n\n"
+      
+      
+  def on_load_response( self, dialog, response_id ):
+    if response_id == LS_DIALOG_RESPONSE_CANCEL:
+      dialog.destroy()
+    elif response_id == LS_DIALOG_RESPONSE_ACCEPT:
+      self.simulator.load_map( dialog.get_filename() )
+      dialog.destroy()
       
       
   def on_random_map( self, widget ):
