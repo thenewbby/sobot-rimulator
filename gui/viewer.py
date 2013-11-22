@@ -124,7 +124,7 @@ class Viewer:
                                           parent = self.window,
                                           action = gtk.FILE_CHOOSER_ACTION_SAVE,
                                           buttons = ( gtk.STOCK_CANCEL, LS_DIALOG_RESPONSE_CANCEL,
-                                                      gtk.STOCK_SAVE, gtk.LS_DIALOG_RESPONSE_ACCEPT ) )
+                                                      gtk.STOCK_SAVE, LS_DIALOG_RESPONSE_ACCEPT ) )
     file_chooser.set_current_folder( 'maps' )
     
     file_chooser.set_modal( True )
