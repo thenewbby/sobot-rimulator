@@ -1,19 +1,19 @@
 # Sobot Rimulator - A Robot Programming Tool
 # Copyright (C) 2013-2014 Nicholas S. D. McCrea
-# 
+#
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-# 
+#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-# 
+#
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
-# 
+#
 # Email mccrea.engineering@gmail.com for questions, comments, or to report bugs.
 
 
@@ -23,25 +23,35 @@
 import utils.linalg2_util as linalg
 from proximity_sensor_view import *
 from supervisor_view import *
+SCALING_FACTOR = 3
 
-# Khepera III Dimensions
-K3_TOP_PLATE = [[ -0.031,  0.043 ],
-                [ -0.031, -0.043 ],
-                [  0.033, -0.043 ],
-                [  0.052, -0.021 ],
-                [  0.057,  0.000 ],
-                [  0.052,  0.021 ],
-                [  0.033,  0.043 ]]
+# Roomba create 2 Dimensions
+RC2_TOP_PLATE = [[ 0.336,  0.09 ],
+                   [  0.246,  0.246 ],
+                   [  0.090,  0.336 ],
+                   [  -0.085, 0.319 ],
+                   [  -0.233, 0.233 ],
+                   [  -0.318, 0.085 ],
+                   [  -0.318, -0.085 ],
+                   [ -0.233, -0.233 ],
+                   [ -0.085, -0.319 ],
+                   [ 0.090, -0.336 ],
+                   [ 0.246,  -0.246 ],
+                   [ 0.336,  -0.09 ]]
+
+for i in RC2_TOP_PLATE:
+    i[0] /= SCALING_FACTOR
+    i[1] /= SCALING_FACTOR
 
 class RobotView:
-  
+
   def __init__( self, viewer, robot ):
     self.viewer = viewer
     self.robot = robot
 
     # add the supervisor views for this robot
     self.supervisor_view = SupervisorView( viewer, robot.supervisor, robot.geometry )
-    
+
     # add the IR sensor views for this robot
     self.ir_sensor_views = []
     for ir_sensor in robot.ir_sensors:
@@ -53,7 +63,7 @@ class RobotView:
     # update the robot traverse path
     position = self.robot.pose.vposition()
     self.traverse_path.append( position )
-    
+
     # draw the internal state ( supervisor ) to the frame
     self.supervisor_view.draw_supervisor_to_frame()
 
@@ -66,14 +76,14 @@ class RobotView:
     robot_bottom = self.robot.global_geometry.vertexes
     self.viewer.current_frame.add_polygons( [ robot_bottom ],
                                             color = "blue",
-                                            alpha = 0.5 ) 
+                                            alpha = 0.5 )
     # add decoration
     robot_pos, robot_theta = self.robot.pose.vunpack()
-    robot_top = linalg.rotate_and_translate_vectors( K3_TOP_PLATE, robot_theta, robot_pos )
+    robot_top = linalg.rotate_and_translate_vectors( RC2_TOP_PLATE, robot_theta, robot_pos )
     self.viewer.current_frame.add_polygons( [ robot_top ],
                                             color = "black",
                                             alpha = 0.5 )
-    
+
     # draw the robot's traverse path if indicated
     if self.viewer.draw_invisibles:
       self._draw_traverse_path_to_frame()
@@ -94,7 +104,7 @@ class RobotView:
     b_r = r_max - m_r*d_min
     m_a = ( a_max - a_min ) / ( r_min - r_max )
     b_a = a_max - m_a*r_min
-    
+
     prev_posn = self.traverse_path[0]
     frame = self.viewer.current_frame
     for posn in self.traverse_path[1::1]:
