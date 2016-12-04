@@ -4,3 +4,4 @@
 # text editor backups
 *.py~
 *.swp
+*.bak
