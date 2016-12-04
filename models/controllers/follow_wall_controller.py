@@ -40,7 +40,7 @@ class FollowWallController:
     self.proximity_sensor_placements = supervisor.proximity_sensor_placements()
 
     # wall-follow parameters
-    self.follow_distance = 0.25 # meters from the center of the robot to the wall
+    self.follow_distance = 1 # meters from the center of the robot to the wall
 
     # control gains
     self.kP = 10.0
@@ -116,7 +116,7 @@ class FollowWallController:
     self.supervisor.set_outputs( v, omega )
 
     # === FOR DEBUGGING ===
-    # self._print_vars( eP, eI, eD, v, omega )
+    #self._print_vars( eP, eI, eD, v, omega )
 
   # return a wall-following vector in the robot's reference frame
   # also returns the component vectors used to calculate the heading
@@ -128,14 +128,14 @@ class FollowWallController:
     #   NOTE: uses preexisting knowledge of the how the sensors are stored and indexed
     if follow_direction == FWDIR_LEFT:
       # if we are following to the left, we bear on the righthand sensors
-      sensor_placements = self.proximity_sensor_placements[7:3:-1]
-      sensor_distances = self.supervisor.proximity_sensor_distances()[7:3:-1]
-      sensor_detections = self.supervisor.proximity_sensor_positive_detections()[7:3:-1]
+      sensor_placements = self.proximity_sensor_placements[5:2:-1]
+      sensor_distances = self.supervisor.proximity_sensor_distances()[5:2:-1]
+      sensor_detections = self.supervisor.proximity_sensor_positive_detections()[5:2:-1]
     elif follow_direction == FWDIR_RIGHT:
       # if we are following to the right, we bear on the lefthand sensors
-      sensor_placements = self.proximity_sensor_placements[:4]
-      sensor_distances = self.supervisor.proximity_sensor_distances()[:4]
-      sensor_detections = self.supervisor.proximity_sensor_positive_detections()[:4]
+      sensor_placements = self.proximity_sensor_placements[:3]
+      sensor_distances = self.supervisor.proximity_sensor_distances()[:3]
+      sensor_detections = self.supervisor.proximity_sensor_positive_detections()[:3]
     else:
       raise Exception( "unknown wall-following direction" )
 

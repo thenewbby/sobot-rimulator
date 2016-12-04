@@ -33,7 +33,7 @@ from wheel_encoder import *
 RC2_WHEEL_RADIUS = 0.072         # meters
 RC2_WHEEL_BASE_LENGTH = 0.235   # meters
 RC2_WHEEL_TICKS_PER_REV = 508.8
-RC2_MAX_WHEEL_DRIVE_RATE = 10.0  # rad/s
+RC2_MAX_WHEEL_DRIVE_RATE = 5.0  # rad/s
 
 SCALING_FACTOR = 3
 # Roomba create 2 Dimensions
@@ -54,13 +54,16 @@ for i in RC2_BOTTOM_PLATE:
     i[1] /= SCALING_FACTOR
 
 RC2_SENSOR_MIN_RANGE = 0.05
-RC2_SENSOR_MAX_RANGE = 0.5
-RC2_SENSOR_POSES = [[ 0.147,  0.315,  65 ], # x, y, theta_degrees
-                   [  0.301,  0.174, 30  ],
-                   [  0.346,  0.036,  6  ],
-                   [  0.346,  -0.036, -6  ],
-                   [  0.301, -0.174, -30  ],
-                   [  0.147, -0.315, -65  ]]
+RC2_SENSOR_MAX_RANGE = 0.2
+RC2_SENSOR_POSES = [#[ -0.203,  0.260,  128 ],
+				    [  0.147,  0.315,  65  ], # x, y, theta_degrees
+                    [  0.301,  0.174,  30  ],
+                    [  0.346,  0.036,  6   ],
+                    [  0.346, -0.036, -6   ],
+                    [  0.301, -0.174, -30  ],
+                    [  0.147, -0.315, -65  ]]
+                    #[ -0.203, -0.260, -128 ],
+                    #[ -0.330,  0.000,  180 ]]
 
 for i in RC2_SENSOR_POSES:
     i[0] /= SCALING_FACTOR

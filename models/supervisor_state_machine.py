@@ -25,9 +25,9 @@ from utils import linalg2_util as linalg
 from sim_exceptions.goal_reached_exception import *
 
 # event parameters
-D_STOP = 0.1     # meters from goal
-D_CAUTION = 0.2  # meters from obstacle
-D_DANGER = 0.07   # meters from obstacle
+D_STOP = 0.05     # meters from goal
+D_CAUTION = 0.10# meters from obstacle
+D_DANGER = 0.04   # meters from obstacle
 
 # progress margin
 PROGRESS_EPSILON = 0.05
@@ -49,7 +49,7 @@ class SupervisorStateMachine:
     elif self.current_state == ControlState.SLIDE_LEFT:       self.execute_state_slide_left()
     elif self.current_state == ControlState.SLIDE_RIGHT:      self.execute_state_slide_right()
     else: raise Exception( "undefined supervisor state or behavior" )
-
+    self._print_debug_info()
 
   # === STATE PROCEDURES ===
   def execute_state_go_to_goal( self ):
@@ -77,11 +77,15 @@ class SupervisorStateMachine:
     elif self.condition_danger():       self.transition_to_state_avoid_obstacles()
     elif self.condition_progress_made() and not self.condition_slide_left():
       self.transition_to_state_go_to_goal()
+    else:
+      self.transition_to_state_go_to_goal()
 
   def execute_state_slide_right( self ):
     if self.condition_at_goal():        self.transistion_to_state_at_goal()
     elif self.condition_danger():       self.transition_to_state_avoid_obstacles()
     elif self.condition_progress_made() and not self.condition_slide_right():
+      self.transition_to_state_go_to_goal()
+    else:
       self.transition_to_state_go_to_goal()
 
   # def execute_state_gtg_and_ao( self ):
@@ -147,7 +151,17 @@ class SupervisorStateMachine:
     ao_cross_fwl = linalg.cross( heading_ao, heading_fwl )
     fwl_cross_gtg = linalg.cross( heading_fwl, heading_gtg )
     ao_cross_gtg = linalg.cross( heading_ao, heading_gtg )
-
+    
+#     print
+#     print "heading gtg", heading_gtg
+#     print "heading_ao", heading_ao
+#     print "heading_fwl", heading_fwl
+#     print
+#     print "ao_cross_fwl", ao_cross_fwl
+#     print "fwl_cross_gtg", fwl_cross_gtg
+#     print "ao_cross_gtg", ao_cross_gtg
+#     print
+    
     return( ( ao_cross_gtg > 0.0 and ao_cross_fwl > 0.0 and fwl_cross_gtg > 0.0 ) or
             ( ao_cross_gtg <= 0.0 and ao_cross_fwl <= 0.0 and fwl_cross_gtg <= 0.0 ) )
 
@@ -166,10 +180,10 @@ class SupervisorStateMachine:
 
   # === helper methods ===
   def _forward_sensor_distances( self ):
-    return self.supervisor.proximity_sensor_distances[1:7]
+    return self.supervisor.proximity_sensor_distances[:]
 
   def _distance_to_goal( self ):
-    return linalg.distance( self.supervisor.estimated_pose.vposition(), self.supervisor.goal )
+    return linalg.distance( self.supervisor.estimated_pose.vposition(), self.supervisor.goal ) 
 
   def _update_best_distance_to_goal( self ):
     self.best_distance_to_goal = min( self.best_distance_to_goal, self._distance_to_goal() )

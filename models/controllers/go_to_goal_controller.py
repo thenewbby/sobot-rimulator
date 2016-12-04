@@ -32,7 +32,7 @@ class GoToGoalController:
     self.supervisor = supervisor
 
     # gains
-    self.kP = 5.0
+    self.kP = 10.0
     self.kI = 0.0
     self.kD = 0.0
     
